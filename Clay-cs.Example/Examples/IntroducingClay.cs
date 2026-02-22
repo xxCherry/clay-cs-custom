@@ -84,7 +84,7 @@ public class IntroducingClay : IDisposable
 
 			Clay.BeginLayout();
 
-			using (Clay.Element(Clay.Id(_clayString["OuterContainer"]), new()
+			using (Clay.Element(new()
 			{
 				backgroundColor = new Clay_Color(43, 41, 51),
 				layout = new()

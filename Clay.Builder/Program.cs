@@ -108,6 +108,17 @@ BuildData[] buildData =
 			new FileData("x86_64-windows-lib-Clay.lib", "Clay.lib"),
 		]),
 	]),
+
+     new("../Clay-cs/runtimes/linux-x64/native", [
+        new("./bin",
+        [
+            new FileData("libx86_64-linux-dll-Clay.so", "libClay.so"),
+        ]),
+        new("./lib",
+        [
+            new FileData("libx86_64-linux-lib-Clay.a", "libClay.a"),
+        ]),
+    ]),
 ];
 
 

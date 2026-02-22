@@ -346,11 +346,6 @@ public unsafe partial struct Clay_String
         public Clay_Vector2 childOffset;
     }
 
-    public partial struct Clay__Clay_ClipElementConfigWrapper
-    {
-        public Clay_ClipElementConfig wrapped;
-    }
-
     public partial struct Clay_BorderWidth
     {
         [NativeTypeName("uint16_t")]
@@ -644,7 +639,7 @@ public unsafe partial struct Clay_String
         public static extern bool Clay_Hovered();
 
         [DllImport("Clay", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void Clay_OnHover([NativeTypeName("void (*)(Clay_ElementId, Clay_PointerData, intptr_t)")] delegate* unmanaged[Cdecl]<Clay_ElementId, Clay_PointerData, nint, void> onHoverFunction, [NativeTypeName("intptr_t")] nint userData);
+        public static extern void Clay_OnHover([NativeTypeName("void (*)(Clay_ElementId, Clay_PointerData, void *)")] delegate* unmanaged[Cdecl]<Clay_ElementId, Clay_PointerData, void*, void> onHoverFunction, void* userData);
 
         [DllImport("Clay", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern bool Clay_PointerOver(Clay_ElementId elementId);

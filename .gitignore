@@ -5,6 +5,7 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea
 */.zig-cache
+Clay.Builder/zig-cache
 Clay.Builder/zig-out
 .vs
 *.DotSettings.user
