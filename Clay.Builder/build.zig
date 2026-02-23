@@ -11,8 +11,8 @@ const TARGETS = [_]TargetData{
     .{ .target = .{ .cpu_arch = .x86_64, .os_tag = .windows }, .as_dll = false },
 
     // Linux
-    .{ .target = .{ .cpu_arch = .x86_64, .os_tag = .linux }, .as_dll = true },
-    .{ .target = .{ .cpu_arch = .x86_64, .os_tag = .linux }, .as_dll = false },
+    .{ .target = .{ .cpu_arch = .x86_64, .os_tag = .linux, .abi = .gnu }, .as_dll = true },
+    .{ .target = .{ .cpu_arch = .x86_64, .os_tag = .linux, .abi = .gnu }, .as_dll = false },
 };
 
 pub fn build(b: *std.Build) void {
