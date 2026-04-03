@@ -195,8 +195,8 @@ public static class Clay
 		context.OnHover.Add(onHover);
 		
 		var ptr = Marshal.GetFunctionPointerForDelegate(onHover);
-		var castPtr = (delegate* unmanaged[Cdecl]<Clay_ElementId, Clay_PointerData, void*, void>)ptr;
-		ClayInterop.Clay_OnHover(castPtr, (void*)userData);
+		var castPtr = (delegate* unmanaged[Cdecl]<Clay_ElementId, Clay_PointerData, nint, void>)ptr;
+		ClayInterop.Clay_OnHover(castPtr, userData);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

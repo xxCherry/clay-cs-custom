@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Clay.Builder;
+﻿using Clay.Builder;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
@@ -97,30 +96,71 @@ Target("Interop", () =>
 string zigDllOut = "./zig-out";
 BuildData[] buildData =
 [
-	new("../Clay-cs/runtimes/win-x64/native", [
-		new("./bin",
-		[
-			new FileData("x86_64-windows-dll-Clay.dll", "Clay.dll"),
-			new FileData("x86_64-windows-dll-Clay.pdb", "Clay.pdb"),
-		]),
-		new("./lib",
-		[
-			new FileData("x86_64-windows-lib-Clay.lib", "Clay.lib"),
-		]),
-	]),
-
-     new("../Clay-cs/runtimes/linux-x64/native", [
+    new("../Clay-cs/runtimes/win-x64/native", [
         new("./bin",
         [
-            new FileData("libx86_64-linux-dll-Clay.so", "libClay.so"),
+            new FileData("windows-x86_64-shared-Clay.dll", "Clay.dll"),
+            new FileData("windows-x86_64-shared-Clay.pdb", "Clay.pdb"),
         ]),
         new("./lib",
         [
-            new FileData("libx86_64-linux-lib-Clay.a", "libClay.a"),
+            new FileData("windows-x86_64-static-Clay.lib", "Clay.lib"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/linux-x64/native", [
+        new("./lib",
+        [
+            new FileData("liblinux-x86_64-shared-Clay.so", "libClay.so"),
+            new FileData("liblinux-x86_64-static-Clay.a", "libClay.a"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/osx-x64/native", [
+        new("./lib",
+        [
+            new FileData("libmacos-x86_64-shared-Clay.dylib", "libClay.dylib"),
+            new FileData("libmacos-x86_64-static-Clay.a", "libClay.a"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/osx-arm64/native", [
+        new("./lib",
+        [
+            new FileData("libmacos-aarch64-shared-Clay.dylib", "libClay.dylib"),
+            new FileData("libmacos-aarch64-static-Clay.a", "libClay.a"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/android-arm/native", [
+        new("./lib",
+        [
+            new FileData("libandroid-armeabi-v7a-shared-Clay.so", "libClay.so"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/android-arm64/native", [
+        new("./lib",
+        [
+            new FileData("libandroid-arm64-v8a-shared-Clay.so", "libClay.so"),
+        ]),
+    ]),
+        new("../Clay-cs/runtimes/android-x86/native", [
+        new("./lib",
+        [
+            new FileData("libandroid-x86-shared-Clay.so", "libClay.so"),
+        ]),
+    ]),
+
+    new("../Clay-cs/runtimes/android-x64/native", [
+        new("./lib",
+        [
+            new FileData("libandroid-x86_64-shared-Clay.so", "libClay.so"),
         ]),
     ]),
 ];
 
+string? androidNdk = null;
 
 Target("Dll", async () =>
 {
@@ -131,7 +171,7 @@ Target("Dll", async () =>
 		Directory.Delete(fromPath, true);
 	}
 
-	await RunAsync("zig", "build", workingDirectory);
+	await RunAsync("zig", $"build -Dandroid-ndk=\"{androidNdk}\"", workingDirectory);
 
 	foreach (var data in buildData)
 	{
@@ -158,5 +198,19 @@ Target("Dll", async () =>
 	}
 });
 
+var bullseyeArgs = new List<string>();
+
+for (var i = 0; i < args.Length; i++)
+{
+    if (args[i] == "--android-ndk" && i + 1 < args.Length)
+    {
+        androidNdk = args[++i];
+    }
+    else
+    {
+        bullseyeArgs.Add(args[i]);
+    }
+}
+
 Target("default", DependsOn("Dll", "Interop"));
-await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException);
+await RunTargetsAndExitAsync(bullseyeArgs, ex => ex is SimpleExec.ExitCodeException);

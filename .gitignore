@@ -9,3 +9,5 @@ Clay.Builder/zig-cache
 Clay.Builder/zig-out
 .vs
 *.DotSettings.user
+.zig-global-cache
+
