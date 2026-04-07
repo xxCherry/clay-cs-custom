@@ -23,6 +23,8 @@ public static class Clay
 	internal static readonly ClayStringCollection ClayStrings = new();
 	internal static readonly Dictionary<nint, ClayManagedContext> ClayContexts = new();
 
+	private static readonly bool UseManagedIdHash = RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"));
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static int GetMaxElementCount()
 	{
@@ -236,13 +238,13 @@ public static class Clay
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId GetElementId(Clay_String idString)
 	{
-		return ClayInterop.Clay_GetElementId(idString);
+		return UseManagedIdHash ? HashString(idString, 0) : ClayInterop.Clay_GetElementId(idString);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId GetElementId(Clay_String idString, uint index)
 	{
-		return ClayInterop.Clay_GetElementIdWithIndex(idString, index);
+		return UseManagedIdHash ? HashStringWithOffset(idString, index, 0) : ClayInterop.Clay_GetElementIdWithIndex(idString, index);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -306,7 +308,7 @@ public static class Clay
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId Id(Clay_String text)
 	{
-		return ClayInterop.Clay__HashString(text, 0);
+		return UseManagedIdHash ? HashString(text, 0) : ClayInterop.Clay__HashString(text, 0);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -318,7 +320,7 @@ public static class Clay
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId Id(Clay_String text, int offset)
 	{
-		return ClayInterop.Clay__HashStringWithOffset(text, (uint)offset, 0);
+		return UseManagedIdHash ? HashStringWithOffset(text, (uint)offset, 0) : ClayInterop.Clay__HashStringWithOffset(text, (uint)offset, 0);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -330,7 +332,8 @@ public static class Clay
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId IdLocal(Clay_String text)
 	{
-		return ClayInterop.Clay__HashString(text, GetParentElementId());
+		var parentElementId = GetParentElementId();
+		return UseManagedIdHash ? HashString(text, parentElementId) : ClayInterop.Clay__HashString(text, parentElementId);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -342,6 +345,63 @@ public static class Clay
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Clay_ElementId IdLocal(Clay_String text, int offset)
 	{
-		return ClayInterop.Clay__HashStringWithOffset(text, (uint)offset, GetParentElementId());
+		var parentElementId = GetParentElementId();
+		return UseManagedIdHash ? HashStringWithOffset(text, (uint)offset, parentElementId) : ClayInterop.Clay__HashStringWithOffset(text, (uint)offset, parentElementId);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe Clay_ElementId HashString(Clay_String key, uint seed)
+	{
+		var hash = seed;
+		for (var i = 0; i < key.length; i++)
+		{
+			hash = unchecked(hash + ((byte*)key.chars)[i]);
+			hash = unchecked(hash + (hash << 10));
+			hash ^= hash >> 6;
+		}
+
+		hash = unchecked(hash + (hash << 3));
+		hash ^= hash >> 11;
+		hash = unchecked(hash + (hash << 15));
+
+		return new Clay_ElementId
+		{
+			id = hash + 1,
+			offset = 0,
+			baseId = hash + 1,
+			stringId = key,
+		};
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe Clay_ElementId HashStringWithOffset(Clay_String key, uint offset, uint seed)
+	{
+		var @base = seed;
+		for (var i = 0; i < key.length; i++)
+		{
+			@base = unchecked(@base + ((byte*)key.chars)[i]);
+			@base = unchecked(@base + (@base << 10));
+			@base ^= @base >> 6;
+		}
+
+		var hash = @base;
+		hash = unchecked(hash + offset);
+		hash = unchecked(hash + (hash << 10));
+		hash ^= hash >> 6;
+
+		hash = unchecked(hash + (hash << 3));
+		@base = unchecked(@base + (@base << 3));
+		hash ^= hash >> 11;
+		@base ^= @base >> 11;
+		hash = unchecked(hash + (hash << 15));
+		@base = unchecked(@base + (@base << 15));
+
+		return new Clay_ElementId
+		{
+			id = hash + 1,
+			offset = offset,
+			baseId = @base + 1,
+			stringId = key,
+		};
 	}
 }

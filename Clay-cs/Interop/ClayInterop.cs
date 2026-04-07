@@ -2,9 +2,16 @@ using System.Runtime.InteropServices;
 
 namespace Clay_cs;
 
+[StructLayout(LayoutKind.Sequential)]
 public unsafe partial struct Clay_String
 {
-    public bool isStaticallyAllocated;
+    private byte _isStaticallyAllocated;
+
+    public bool isStaticallyAllocated
+    {
+        readonly get => _isStaticallyAllocated != 0;
+        set => _isStaticallyAllocated = value ? (byte)1 : (byte)0;
+    }
 
     [NativeTypeName("int32_t")]
     public int length;
@@ -13,6 +20,7 @@ public unsafe partial struct Clay_String
     public sbyte* chars;
 }
 
+[StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Clay_StringSlice
     {
         [NativeTypeName("int32_t")]
@@ -77,6 +85,7 @@ public unsafe partial struct Clay_String
         public float height;
     }
 
+[StructLayout(LayoutKind.Sequential)]
     public partial struct Clay_ElementId
     {
         [NativeTypeName("uint32_t")]
@@ -337,11 +346,24 @@ public unsafe partial struct Clay_String
         public void* customData;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public partial struct Clay_ClipElementConfig
     {
-        public bool horizontal;
+        private byte _horizontal;
 
-        public bool vertical;
+        public bool horizontal
+        {
+            readonly get => _horizontal != 0;
+            set => _horizontal = value ? (byte)1 : (byte)0;
+        }
+
+        private byte _vertical;
+
+        public bool vertical
+        {
+            readonly get => _vertical != 0;
+            set => _vertical = value ? (byte)1 : (byte)0;
+        }
 
         public Clay_Vector2 childOffset;
     }
@@ -415,11 +437,24 @@ public unsafe partial struct Clay_String
         public void* customData;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public partial struct Clay_ScrollRenderData
     {
-        public bool horizontal;
+        private byte _horizontal;
 
-        public bool vertical;
+        public bool horizontal
+        {
+            readonly get => _horizontal != 0;
+            set => _horizontal = value ? (byte)1 : (byte)0;
+        }
+
+        private byte _vertical;
+
+        public bool vertical
+        {
+            readonly get => _vertical != 0;
+            set => _vertical = value ? (byte)1 : (byte)0;
+        }
     }
 
     public partial struct Clay_BorderRenderData
@@ -454,6 +489,7 @@ public unsafe partial struct Clay_String
         public Clay_ScrollRenderData clip;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Clay_ScrollContainerData
     {
         public Clay_Vector2* scrollPosition;
@@ -464,14 +500,27 @@ public unsafe partial struct Clay_String
 
         public Clay_ClipElementConfig config;
 
-        public bool found;
+        private byte _found;
+
+        public bool found
+        {
+            readonly get => _found != 0;
+            set => _found = value ? (byte)1 : (byte)0;
+        }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public partial struct Clay_ElementData
     {
         public Clay_BoundingBox boundingBox;
 
-        public bool found;
+        private byte _found;
+
+        public bool found
+        {
+            readonly get => _found != 0;
+            set => _found = value ? (byte)1 : (byte)0;
+        }
     }
 
     [NativeTypeName("uint8_t")]
