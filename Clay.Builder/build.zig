@@ -84,6 +84,22 @@ const TARGETS = [_]TargetData{
         .shared = false,
         .platform_label = "windows-x86_64",
     },
+    .{
+        .target = .{
+            .cpu_arch = .aarch64,
+            .os_tag = .windows,
+        },
+        .shared = true,
+        .platform_label = "windows-aarch64",
+    },
+    .{
+        .target = .{
+            .cpu_arch = .aarch64,
+            .os_tag = .windows,
+        },
+        .shared = false,
+        .platform_label = "windows-aarch64",
+    },
 
     // Linux
     .{

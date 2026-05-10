@@ -108,6 +108,18 @@ BuildData[] buildData =
         ]),
     ]),
 
+    new("../Clay-cs/runtimes/win-arm64/native", [
+        new("./bin",
+        [
+            new FileData("windows-aarch64-shared-Clay.dll", "Clay.dll"),
+            new FileData("windows-aarch64-shared-Clay.pdb", "Clay.pdb"),
+        ]),
+        new("./lib",
+        [
+            new FileData("windows-aarch64-static-Clay.lib", "Clay.lib"),
+        ]),
+    ]),
+
     new("../Clay-cs/runtimes/linux-x64/native", [
         new("./lib",
         [

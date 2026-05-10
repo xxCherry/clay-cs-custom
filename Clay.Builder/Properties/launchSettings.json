@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Clay.Builder": {
+      "commandName": "Project",
+      "commandLineArgs": "--android-ndk \"C:\\Users\\User\\Downloads\\android-ndk-r24-windows\\android-ndk-r24\""
+    }
+  }
+}
